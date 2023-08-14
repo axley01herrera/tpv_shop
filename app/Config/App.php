@@ -24,8 +24,7 @@ class App extends BaseConfig
      * @var string
      */
 
-    public $baseURL = 'http://'; // LOCAL
-    //public $baseURL = 'https://'; // PRODUCTION
+    public $baseURL = 'http://tpvshop';
 
     /**
      * --------------------------------------------------------------------------
