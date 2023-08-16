@@ -50,12 +50,12 @@
                 <li class="<?php if ($menu_ative == "product") {
                                 echo "mm-active";
                             } ?>">
-                    <a href="<?php echo base_url('Administrator/products'); ?>">
-                        <i class="icon nav-icon <?php if ($menu_ative == "home") {
+                    <a href="<?php echo base_url('TPV/products'); ?>">
+                        <i class="icon nav-icon <?php if ($menu_ative == "product") {
                                                     echo "active";
                                                 } ?>" data-feather="archive"></i>
                         <span class="menu-item">
-                            Productos
+                            Artículos
                         </span>
                     </a>
                 </li>

@@ -38,7 +38,7 @@
                     </div>
                     <div class="col-12 col-lg-3 mt-2">
                         <label for="txt-zipCode">Codigo Postal</label>
-                        <input type="text" id="txt-zipCode" class="form-control required focus" maxlength="5" value="<?php echo $settings->zipCode; ?>" />
+                        <input type="text" id="txt-zipCode" class="form-control required focus number" maxlength="5" value="<?php echo $settings->zipCode; ?>" />
                     </div>
                     <div class="col-12 col-lg-3 mt-2">
                         <label for="txt-country">País</label>

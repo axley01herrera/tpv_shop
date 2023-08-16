@@ -29,6 +29,41 @@ class TPV extends BaseController
         return view('main', $data);
     }
 
+    # PRODUCTS 
+
+    public function products()
+    {
+        # VERIFY SESSION
+        if(empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['menu_ative'] = 'product';
+        $data['page'] = 'products/mainProducts';
+       
+        return view('main', $data);
+    }
+
+    public function showModalProduct()
+    {
+         # VERIFY SESSION
+         if(empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['action'] = $this->request->getPost('action');
+
+        if ($data['action'] == 'create')
+            $data['title'] = 'Nuevo Artículo';
+        elseif ($data['action'] == 'update') {
+            $data['title'] = 'Actualizando ' . $data['product'][0]->name;
+        }
+
+        return view('modals/modalProduct', $data);
+    }
+
     # SETTINGS
 
     public function settings()
