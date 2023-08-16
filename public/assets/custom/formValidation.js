@@ -27,16 +27,5 @@ function checkRequiredValues(className) {
     return response;
 }
 
-$(document).ready(function () {
-    $('.focus').on('change input', function () {
-        $(this).removeClass('is-invalid');
-        let inputID = $(this).attr("id");
-        $('#msg-' + inputID).html("");
-    });
-    $('.number').on('input', function () {
-        jQuery(this).val(jQuery(this).val().replace(/[^0-9]/g, ''));
-    });
-});
-
 
 

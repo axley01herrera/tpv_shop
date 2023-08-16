@@ -47,8 +47,8 @@ class TPV extends BaseController
 
     public function showModalProduct()
     {
-         # VERIFY SESSION
-         if(empty($this->objSession->get('user'))) {
+        # VERIFY SESSION
+        if(empty($this->objSession->get('user'))) {
             return view('errorPage/sessionExpired');
         }
 
@@ -62,6 +62,34 @@ class TPV extends BaseController
         }
 
         return view('modals/modalProduct', $data);
+    }
+
+    public function createProduct()
+    {
+        $result = array();
+
+        # VERIFY SESSION
+        if(empty($this->objSession->get('user'))) {
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $data = array();
+        $data['name'] = htmlspecialchars(trim($this->request->getPost('name')));
+        $data['code'] = htmlspecialchars(trim($this->request->getPost('code')));
+        $data['price'] = htmlspecialchars(trim($this->request->getPost('price')));
+        
+        $checkDuplicate = $this->objMainModel->checkDuplicate('shop_product', 'code', $data['code']);
+
+        if(empty($checkDuplicate)) {
+            $result = $this->objMainModel->objCreate('shop_product', $data);
+        } else {
+            $result['error'] = 3;
+            $result['msg'] = 'duplicate record';
+        }
+
+        return json_encode($result);
     }
 
     # SETTINGS

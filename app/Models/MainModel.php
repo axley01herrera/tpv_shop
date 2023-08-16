@@ -22,6 +22,17 @@ class MainModel extends Model
         return $query->get()->getResult();
     }
 
+    public function checkDuplicate($table, $field, $value, $id = null)
+    {
+        $query = $this->db->table($table)
+            ->where($field, $value);
+
+        if (!empty($id))
+            $query->whereNotIn('id', [0 => $id]);
+
+        return $query->get()->getResult();
+    }
+
     public function objCreate($table, $data)
     {
         $query = $this->db->table($table)

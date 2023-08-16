@@ -10,7 +10,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12 mt-2">
-                        <label for="txt-art">Artículo</label>
+                        <label for="txt-name">Artículo</label>
                         <input id="txt-name" type="text" class="form-control modal-required focus" value="<?php echo @$product[0]->name; ?>">
                         <p id="msg-txt-name" class="text-danger text-end"></p>
                     </div>
@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-6">
                         <label for="txt-price">Precio</label>
-                        <input id="txt-price" type="text" class="form-control modal-required focus" value="<?php echo @$product[0]->price; ?>">
+                        <input id="txt-price" type="text" class="form-control modal-required focus decimal" value="<?php echo @$product[0]->price; ?>">
                         <p id="msg-txt-price" class="text-danger text-end"></p>
                     </div>
                 </div>
@@ -32,6 +32,46 @@
 </div>
 
 <script>
-    $('#btn-modal-submit').on('click', function() {  
+    $(document).ready(function () {
+        $('#btn-modal-submit').on('click', function() {
+            let result = checkRequiredValues('modal-required');
+            if (result == 0) {
+                $('#btn-modal-submit').attr('disabled', true);
+                $.ajax({
+                    type: "post",
+                    url: "<?php echo base_url('TPV/createProduct'); ?>",
+                    data: {
+                        'name': $('#txt-name').val(),
+                        'code': $('#txt-code').val(),
+                        'price': $('#txt-price').val(),
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        switch (response.error) {
+                            case 0:
+                                showToast('success', 'Artículo Creado!');
+                                closeModal();
+                                break;
+                            case 1:
+                                showToast('error', 'Ha ocurrido un error!');
+                                break;
+                            case 2:
+                                window.location.href = "<?php echo base_url('Authentication?session=expired'); ?>";
+                                break;
+                            case 3:
+                                showToast('error', 'Ya existe un artículo con ese código!');
+                                $('#txt-code').addClass('is-invalid');
+                                $('#msg-txt-code').html('Ya existe un artículo con ese código');
+                                $('#btn-modal-submit').removeAttr('disabled');
+                                break;
+                        }
+                    },
+                    error: function(error) {
+                        showToast('error', 'Ha ocurrido un error!');
+                    }
+                });
+            } else
+                showToast('error', 'Todos los campos son requeridos!');
+        });
     });
 </script>

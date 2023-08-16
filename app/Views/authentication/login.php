@@ -62,40 +62,45 @@
             </div>
         </div>
     </div>
+</body>
 
-    <script>
-        $(document).ready(function() {
+</html>
+<script>
+    let session = '<?php echo $session; ?>';
+    if (session == 'expired')
+        showToast('error', 'Su sessión ha expirado!');
 
-            let session = '<?php echo $session; ?>';
-            if (session == 'expired')
-                showToast('error', 'Su sessión ha expirado!');
+    $('#btn-login').on('click', function() {
+        let result = checkRequiredValues('required');
+        if (result == 0) {
+            $('#btn-login').attr('disabled', true);
+            let password = $('#txt-password').val();
+            $.ajax({
+                type: "post",
+                url: "<?php echo base_url('Authentication/login'); ?>",
+                data: {
+                    'password': password
+                },
+                dataType: "json",
+                success: function(response) {
 
-            $('#btn-login').on('click', function() {
-                let result = checkRequiredValues('required');
-                if (result == 0) {
-                    $('#btn-login').attr('disabled', true);
-                    let password = $('#txt-password').val();
-                    $.ajax({
-                        type: "post",
-                        url: "<?php echo base_url('Authentication/login'); ?>",
-                        data: {
-                            'password': password
-                        },
-                        dataType: "json",
-                        success: function(response) {
+                    if (response.error == 0)
+                        window.location.href = '<?php echo base_url('TPV/dashboard'); ?>';
+                    else if (response.error == 1) {
+                        showToast('error', 'Clave de Acceso Incorrecta!');
+                        $('#txt-password').addClass('is-invalid');
+                        $('#btn-login').removeAttr('disabled');
+                    }
+                },
 
-                            if (response.error == 0)
-                                window.location.href = '<?php echo base_url('TPV/dashboard'); ?>';
-                            else if (response.error == 1) {
-                                showToast('error', 'Clave de Acceso Incorrecta!');
-                                $('#txt-password').addClass('is-invalid');
-                                $('#btn-login').removeAttr('disabled');
-                            }
-                        },
-
-                    });
-                } else
-                    showToast('error', 'Debe escribir su contraseña!');
             });
-        });
-    </script>
+        } else
+            showToast('error', 'Debe escribir su contraseña!');
+    });
+
+    $('.focus').on('change input', function() {
+        $(this).removeClass('is-invalid');
+        let inputID = $(this).attr("id");
+        $('#msg-' + inputID).html("");
+    });
+</script>
