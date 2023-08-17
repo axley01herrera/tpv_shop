@@ -51,10 +51,12 @@
                 $.ajax({
                     type: "post",
                     url: url,
+                    url: url,
                     data: {
                         'name': $('#txt-name').val(),
                         'code': $('#txt-code').val(),
                         'price': $('#txt-price').val(),
+                        'id': '<?php echo @$product[0]->id; ?>'
                         'id': '<?php echo @$product[0]->id; ?>'
                     },
                     dataType: "json",
