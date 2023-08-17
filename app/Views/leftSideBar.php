@@ -32,16 +32,16 @@
                     </a>
                 </li>
                 
-                <!-- EMPLOYEE -->
-                <li class="<?php if ($menu_ative == "employee") {
+                <!-- TPV -->
+                <li class="<?php if ($menu_ative == "tpv") {
                                 echo "mm-active";
                             } ?>">
-                    <a href="<?php echo base_url('Administrator/employees'); ?>">
-                        <i class="icon nav-icon <?php if ($menu_ative == "employee") {
+                    <a href="<?php echo base_url('TPV/tpv'); ?>">
+                        <i class="icon nav-icon <?php if ($menu_ative == "tpv") {
                                                     echo "active";
-                                                } ?>" data-feather="users"></i>
+                                                } ?>" data-feather="shopping-cart"></i>
                         <span class="menu-item">
-                            Empleados
+                            Caja Registradora
                         </span>
                     </a>
                 </li>

@@ -32,6 +32,70 @@ class TPV extends BaseController
         return view('main', $data);
     }
 
+    # TPV
+
+    public function tpv()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['menu_ative'] = 'tpv';
+        $data['page'] = 'tpv/mainTPV';
+
+        return view('main', $data);
+    }
+
+    public function dtProcessingProductsTPV()
+    {
+        $dataTableRequest = $_REQUEST;
+
+        $params = array();
+        $params['draw'] = $dataTableRequest['draw'];
+        $params['start'] = $dataTableRequest['start'];
+        $params['length'] = $dataTableRequest['length'];
+        $params['search'] = $dataTableRequest['search']['value'];
+        $params['sortColumn'] = $dataTableRequest['order'][0]['column'];
+        $params['sortDir'] = $dataTableRequest['order'][0]['dir'];
+
+        $row = array();
+        $totalRecords = 0;
+
+        $result = $this->objDataTablesModel->dtProductsTPV($params);
+
+        $totalRows = sizeof($result);
+
+        for ($i = 0; $i < $totalRows; $i++) {
+
+            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-outline-primary btn-add-product" data-id="' . $result[$i]->id . '"><i class="mdi mdi-cart-plus"></i> Añadir</button>';
+
+            $col = array();
+            $col['name'] = $result[$i]->name;
+            $col['code'] = $result[$i]->code;
+            $col['price'] = '€ ' . number_format($result[$i]->price, 2, ".", ',');
+            $col['action'] = $btn_edit;
+
+            $row[$i] =  $col;
+        }
+
+        if ($totalRows > 0) {
+            if (empty($params['search']))
+                $totalRecords = $this->objDataTablesModel->getTotalProducts();
+            else
+                $totalRecords = $totalRows;
+        }
+
+        $data = array();
+        $data['draw'] = $dataTableRequest['draw'];
+        $data['recordsTotal'] = intval($totalRecords);
+        $data['recordsFiltered'] = intval($totalRecords);
+        $data['data'] = $row;
+
+        return json_encode($data);
+    }
+
     # PRODUCTS 
 
     public function products()
@@ -168,7 +232,9 @@ class TPV extends BaseController
 
         # VERIFY SESSION
         if (empty($this->objSession->get('user'))) {
-            return view('errorPage/sessionExpired');
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
         }
 
         $id = $this->request->getPost('id');
