@@ -37,19 +37,32 @@
             let result = checkRequiredValues('modal-required');
             if (result == 0) {
                 $('#btn-modal-submit').attr('disabled', true);
+                let action = '<?php echo $action; ?>';
+                let url = '';
+                let msg = '';
+                if(action == 'create') {
+                    url = "<?php echo base_url('TPV/createProduct'); ?>";
+                    msg = 'Artículo Creado!';
+                }
+                else {
+                    url = "<?php echo base_url('TPV/updateProduct'); ?>";
+                    msg = 'Artículo Actualizado!';
+                }
                 $.ajax({
                     type: "post",
-                    url: "<?php echo base_url('TPV/createProduct'); ?>",
+                    url: url,
                     data: {
                         'name': $('#txt-name').val(),
                         'code': $('#txt-code').val(),
                         'price': $('#txt-price').val(),
+                        'id': '<?php echo @$product[0]->id; ?>'
                     },
                     dataType: "json",
                     success: function(response) {
                         switch (response.error) {
                             case 0:
-                                showToast('success', 'Artículo Creado!');
+                                dtArticle.draw();
+                                showToast('success', msg);
                                 closeModal();
                                 break;
                             case 1:
