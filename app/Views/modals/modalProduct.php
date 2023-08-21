@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-6">
                         <label for="txt-price">Precio</label>
-                        <input id="txt-price" type="text" class="form-control modal-required focus decimal" value="<?php echo @$product[0]->price; ?>">
+                        <input id="txt-price" type="text" class="form-control modal-required focus decimal" value="<?php if(isset($product[0]->price)) echo number_format($product[0]->price, 2, ".", ','); ?>">
                         <p id="msg-txt-price" class="text-danger text-end"></p>
                     </div>
                 </div>

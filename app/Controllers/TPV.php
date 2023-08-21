@@ -42,9 +42,17 @@ class TPV extends BaseController
         }
 
         $data = array();
+        $basket = $this->objMainModel->objDataByField('shop_basket', 'status', 1);
+        
+        if(empty($basket)) {
+            $result = $this->objMainModel->objCreate('shop_basket', ['status' => 1]);
+            $data['basketID'] = $result['id'];
+        } else 
+            $data['basketID'] = $basket[0]->id;
+
         $data['menu_ative'] = 'tpv';
         $data['page'] = 'tpv/mainTPV';
-
+        
         return view('main', $data);
     }
 
@@ -94,6 +102,86 @@ class TPV extends BaseController
         $data['data'] = $row;
 
         return json_encode($data);
+    }
+
+    public function dtBasket()
+    {
+        $basketID = $this->request->getPost('basketID');
+
+        $data = array();
+        $data['basket'] = $this->objMainModel->dtBasket($basketID);
+
+        return view('tpv/basket', $data);
+    }
+
+    public function addProductToBasket()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $result = $this->objMainModel->objDataByID('shop_product', $this->request->getPost('productID'));
+
+        $data = array();
+        $data['fk_basket'] = $this->request->getPost('basketID');
+        $data['fk_product'] = $this->request->getPost('productID');
+        $data['amount'] = $result[0]->price;
+
+        $result = $this->objMainModel->objCreate('shop_basket_product', $data);
+
+        return json_encode($result);
+    }
+
+    public function removeArticleFromBasket()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $id = $this->request->getPost('id');
+        $result = $this->objMainModel->objDelete('shop_basket_product', $id);
+
+        return json_encode($result);
+    }
+
+    public function modalEditArticleFromBasket()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['dataEdit'] = $this->objMainModel->getShopBasketProductByID($this->request->getPost('id'));
+        $data['title'] = 'Editando '.$data['dataEdit'][0]->name;
+
+        return view('modals/modalEditArticleFromBasket', $data);
+    }
+
+    public function updateArticlePriceFromBasket()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $data = array();
+        $data['amount'] = $this->request->getPost('amount');
+
+        $result = $this->objMainModel->objUpdate('shop_basket_product', $data, $this->request->getPost('id'));
+
+        return json_encode($result);
     }
 
     # PRODUCTS 

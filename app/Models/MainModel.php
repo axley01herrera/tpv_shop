@@ -22,6 +22,14 @@ class MainModel extends Model
         return $query->get()->getResult();
     }
 
+    public function objDataByField($table, $field, $value)
+    {
+        $query = $this->db->table($table)
+        ->where($field, $value);
+
+        return $query->get()->getResult();
+    }
+
     public function checkDuplicate($table, $field, $value, $id = null)
     {
         $query = $this->db->table($table)
@@ -65,5 +73,52 @@ class MainModel extends Model
             $result['error'] = 1;
 
         return $result;
+    }
+
+    public function objDelete($table, $id)
+    {
+        $return = array();
+
+        $query = $this->db->table($table)
+        ->where('id', $id)
+        ->delete();
+
+        if($query == true) {
+            $return['error'] = 0;
+            $return['msg'] = 'success';
+        } else {
+            $return['error'] = 0;
+            $return['msg'] = 'error on delete record';
+        }
+
+        return $return;
+    }
+
+    public function dtBasket($basketID)
+    {
+        $query = $this->db->table('shop_basket_product sbp')
+        ->select('
+            sbp.id AS id,
+            sbp.amount AS amount,
+            sp.name AS name,
+        ')
+        ->join('shop_product sp', 'sp.id = sbp.fk_product')
+        ->where('fk_basket', $basketID);
+
+        return $query->get()->getResult();
+    }
+
+    public function getShopBasketProductByID($id)
+    {
+        $query = $this->db->table('shop_basket_product sbp')
+        ->select('
+            sbp.id AS id,
+            sbp.amount AS amount,
+            sp.name AS name,
+        ')
+        ->join('shop_product sp', 'sp.id = sbp.fk_product')
+        ->where('sbp.id', $id);
+
+        return $query->get()->getResult();
     }
 }
