@@ -90,7 +90,7 @@ class TPV extends BaseController
 
         if ($totalRows > 0) {
             if (empty($params['search']))
-                $totalRecords = $this->objDataTablesModel->getTotalProducts();
+                $totalRecords = $this->objDataTablesModel->getTotalProductsTPV();
             else
                 $totalRecords = $totalRows;
         }

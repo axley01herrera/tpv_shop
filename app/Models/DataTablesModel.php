@@ -70,7 +70,7 @@ class DataTablesModel extends Model
         $query = $this->db->table('shop_product')
             ->selectCount('id')
             ->get()->getResult();
-
+            
         return $query[0]->id;
     }
 
