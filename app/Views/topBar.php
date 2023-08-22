@@ -25,9 +25,9 @@
                     <div class="p-3 bg-primary border-bottom">
                         <h6 class="mb-0 text-white">Administrador</h6>
                     </div>
-                    <a class="dropdown-item" href="#" id="btn-config"><i class="mdi mdi-cog text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Configuración</span></a>
+                    <a class="dropdown-item" href="<?php echo base_url('TPV/settings'); ?>" id="btn-config"><i class="mdi mdi-cog text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Configuración</span></a>
                     <a class="dropdown-item" href="#" id="btn-changeKey"><i class="mdi mdi-key-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Cambiar Contraseña</span></a>
-                    <a class="dropdown-item" href="<?php echo base_url('Home'); ?>"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Salir</span></a>
+                    <a class="dropdown-item" href="<?php echo base_url('Authentication'); ?>"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Salir</span></a>
                 </div>
             </div>
         </div>
@@ -35,32 +35,13 @@
 </header>
 
 <script>
-
-    $('#btn-config').click(function(e) {
-
-        e.preventDefault();
-
-        $.ajax({
-            type: "post",
-            url: "<?php echo base_url('Administrator/showModalConfig'); ?>",
-            dataType: "html",
-            success: function(htmlResponse) {
-                $('#main-modal').html(htmlResponse);
-            },
-            error: function(error) {
-                showToast('error', 'Ha ocurrido un error');
-            }
-        });
-
-    });
-
     $('#btn-changeKey').click(function(e) {
 
         e.preventDefault();
 
         $.ajax({
             type: "post",
-            url: "<?php echo base_url('Administrator/showModalChangeKey'); ?>",
+            url: "<?php echo base_url('TPV/showModalChangeKey'); ?>",
             dataType: "html",
             success: function(htmlResponse) {
                 $('#main-modal').html(htmlResponse);

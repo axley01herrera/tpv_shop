@@ -39,9 +39,9 @@
                     <a href="<?php echo base_url('TPV/tpv'); ?>">
                         <i class="icon nav-icon <?php if ($menu_ative == "tpv") {
                                                     echo "active";
-                                                } ?>" data-feather="shopping-cart"></i>
+                                                } ?>" data-feather="monitor"></i>
                         <span class="menu-item">
-                            Caja Registradora
+                            TPV
                         </span>
                     </a>
                 </li>

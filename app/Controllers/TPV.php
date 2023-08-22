@@ -500,4 +500,35 @@ class TPV extends BaseController
 
         return json_encode($result);
     }
+
+    public function showModalChangeKey()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['title'] = 'Clave de Acceso';
+
+        return view('modals/modalChangeKey', $data);
+    }
+
+    public function updatePassword()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result['error'] = 2;
+            return json_encode($result);
+        }
+
+        $password = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+
+        $data = array();
+        $data['password'] = $password;
+
+        $result = $this->objMainModel->objUpdate('shop_config', $data, 1);
+
+        return json_encode($result);
+    }
 }
