@@ -55,10 +55,16 @@ class TPV extends BaseController
 
         for ($i = 0; $i < $totalRows; $i++) {
 
+            if($result[$i]->payType == 1)
+                $payType = "Efectivo";
+            else
+                $payType = "Tarjeta";
+
             $col = array();
             $col['id'] = $result[$i]->basketID;
             $col['date'] = $result[$i]->date;
             $col['articles'] = $result[$i]->articles;
+            $col['payType'] = $payType;
             $col['amount'] = '€ ' . number_format($result[$i]->amount, 2, ".", ',');
             
             $row[$i] =  $col;

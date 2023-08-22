@@ -20,28 +20,28 @@ class DataTablesModel extends Model
     {
         $query = $this->db->table('shop_basket')
             ->select('
-            shop_basket.id as basketID,
-            shop_basket.dateTime AS date,
-            COUNT(shop_basket.id) AS articles,
-            SUM(shop_basket_product.amount) AS amount
-            ', FALSE)
-        ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id');
-        
+        shop_basket.id as basketID,
+        shop_basket.dateTime AS date,
+        COUNT(shop_basket.id) AS articles,
+        shop_basket.payType AS payType,
+        SUM(shop_basket_product.amount) AS amount
+        ', FALSE)
+            ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id');
+
         $query->where('status', 0);
 
         if (!empty($params['search'])) {
             $query->groupStart();
             $query->like('shop_basket.id', $params['search']);
             $query->orLike('shop_basket.dateTime', $params['search']);
+            $query->orLike('payType', $params['search']);
             $query->groupEnd();
         }
-
+        
         $query->offset($params['start']);
         $query->limit($params['length']);
         $query->orderBy($this->dtHistorySort($params['sortColumn'], $params['sortDir']));
         $query->groupBy('shop_basket.id');
-
-        // $compiled = $query->getCompiledSelect(); echo $compiled; exit();
 
         return $query->get()->getResult();
     }
@@ -60,7 +60,22 @@ class DataTablesModel extends Model
                 $sort = 'shop_basket.dateTime ASC';
             else
                 $sort = 'shop_basket.dateTime DESC';
-        } 
+        } elseif ($column == 2) {
+            if ($dir == 'asc')
+                $sort = 'articles ASC';
+            else
+                $sort = 'articles DESC';
+        } elseif ($column == 3) {
+            if ($dir == 'asc')
+                $sort = 'payType ASC';
+            else
+                $sort = 'payType DESC';
+        } elseif ($column == 4) {
+            if ($dir == 'asc')
+                $sort = 'amount ASC';
+            else
+                $sort = 'amount DESC';
+        }
 
         return $sort;
     }
@@ -132,7 +147,7 @@ class DataTablesModel extends Model
         $query = $this->db->table('shop_product')
             ->selectCount('id')
             ->get()->getResult();
-            
+
         return $query[0]->id;
     }
 
@@ -152,7 +167,7 @@ class DataTablesModel extends Model
             $query->groupEnd();
         }
 
-        
+
         $query->offset($params['start']);
         $query->limit($params['length']);
         $query->orderBy($this->dtProductsSortTPV($params['sortColumn'], $params['sortDir']));

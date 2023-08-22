@@ -14,7 +14,8 @@
                             <thead>
                                 <th><strong>ID</strong></th>
                                 <th><strong>Fecha</th>
-                                <th><strong>Total de Artículos</strong></th>
+                                <th class="text-center"><strong>Total de Artículos</strong></th>
+                                <th class="text-center"><strong>Tipo de Pago</strong></th>
                                 <th class="text-end"><strong>Monto</strong></th>
                             </thead>
                         </table>
@@ -45,7 +46,7 @@
             type: "POST"
         },
         order: [
-            [0, 'asc']
+            [0, 'desc']
         ],
         columns: [{
                 data: 'id',
@@ -55,12 +56,18 @@
             },
             {
                 data: 'articles',
-                searchable: false
+                searchable: false,
+                class: 'text-center'
+            },
+            {
+                data: 'payType',
+                searchable: false,
+                class: 'text-center'
             },
             {
                 data: 'amount',
                 searchable: false,
-                class: 'text_end'
+                class: 'text-end'
             },
         ],
     });
