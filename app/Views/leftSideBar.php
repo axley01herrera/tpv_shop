@@ -22,7 +22,7 @@
                 <li class="<?php if ($menu_ative == "dashboard") {
                                 echo "mm-active";
                             } ?>">
-                    <a href="<?php echo base_url('Administrator/dashboard'); ?>">
+                    <a href="<?php echo base_url('TPV/dashboard'); ?>">
                         <i class="icon nav-icon <?php if ($menu_ative == "dashboard") {
                                                     echo "active";
                                                 } ?>" data-feather="home"></i>

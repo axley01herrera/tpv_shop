@@ -18,6 +18,8 @@ class TPV extends BaseController
         $this->objDataTablesModel = new DataTablesModel;
     }
 
+    # DASHBOARD
+
     public function dashboard()
     {
         # VERIFY SESSION
@@ -30,6 +32,52 @@ class TPV extends BaseController
         $data['page'] = 'dashboard/mainDashboard';
 
         return view('main', $data);
+    }
+
+    public function dtProcessingHistory()
+    {
+        $dataTableRequest = $_REQUEST;
+
+        $params = array();
+        $params['draw'] = $dataTableRequest['draw'];
+        $params['start'] = $dataTableRequest['start'];
+        $params['length'] = $dataTableRequest['length'];
+        $params['search'] = $dataTableRequest['search']['value'];
+        $params['sortColumn'] = $dataTableRequest['order'][0]['column'];
+        $params['sortDir'] = $dataTableRequest['order'][0]['dir'];
+
+        $row = array();
+        $totalRecords = 0;
+
+        $result = $this->objDataTablesModel->dtHistory($params);
+
+        $totalRows = sizeof($result);
+
+        for ($i = 0; $i < $totalRows; $i++) {
+
+            $col = array();
+            $col['id'] = $result[$i]->basketID;
+            $col['date'] = $result[$i]->date;
+            $col['articles'] = $result[$i]->articles;
+            $col['amount'] = '€ ' . number_format($result[$i]->amount, 2, ".", ',');
+            
+            $row[$i] =  $col;
+        }
+
+        if ($totalRows > 0) {
+            if (empty($params['search']))
+                $totalRecords = $this->objDataTablesModel->getTotalHistory();
+            else
+                $totalRecords = $totalRows;
+        }
+
+        $data = array();
+        $data['draw'] = $dataTableRequest['draw'];
+        $data['recordsTotal'] = intval($totalRecords);
+        $data['recordsFiltered'] = intval($totalRecords);
+        $data['data'] = $row;
+
+        return json_encode($data);
     }
 
     # TPV
@@ -45,13 +93,13 @@ class TPV extends BaseController
         $basket = $this->objMainModel->objDataByField('shop_basket', 'status', 1);
         
         if(empty($basket)) {
-            $result = $this->objMainModel->objCreate('shop_basket', ['status' => 1]);
+            $insert = array();
+            $insert['status'] = 1;
+            $result = $this->objMainModel->objCreate('shop_basket', $insert);
             $data['basketID'] = $result['id'];
-        } else {
+        } else 
             $data['basketID'] = $basket[0]->id;
-            $this->objMainModel->objUpdate('shop_basket', ['dateTime' => date("Y-m-d H:i:s")], $data['basketID']);
-        }
-
+            
         $data['menu_ative'] = 'tpv';
         $data['page'] = 'tpv/mainTPV';
         
@@ -186,6 +234,20 @@ class TPV extends BaseController
         return json_encode($result);
     }
 
+    public function modalPayType()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['title'] = 'Tipo de Pago';
+        $data['basketID'] = $this->request->getPost('basketID');
+
+        return view('modals/modalPayType', $data);
+    }
+
     public function charge()
     {
         # VERIFY SESSION
@@ -197,7 +259,15 @@ class TPV extends BaseController
         }
 
         $basketID = $this->request->getPost('basketID');
-        $result = $this->objMainModel->objUpdate('shop_basket', ['status' => 0], $basketID);
+        $payType = $this->request->getPost('payType'); 
+       
+        $data = array();
+        $data['status'] = 0;
+        $data['dateTime'] = date("Y-m-d H:i:s");
+        $data['date'] = date("Y-m-d");
+        $data['payType'] = (int) $payType; 
+       
+        $result = $this->objMainModel->objUpdate('shop_basket', $data, $basketID);
         
         return json_encode($result);
     }

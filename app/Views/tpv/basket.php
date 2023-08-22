@@ -100,33 +100,25 @@
     });
 
     $('#btn-charge').on('click', function() {
-        $('#btn-charge').attr('disabled', true);
-        $.ajax({
-            type: "post",
-            url: "<?php echo base_url('TPV/charge'); ?>",
-            data: {
-                'basketID': basketID
-            },
-            dataType: "json",
-            success: function(response) {
-                switch (response.error) {
-                    case 0:
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, "1000");
-                        showToast('success', 'Cesta cobrada!');
-                        break;
-                    case 1:
-                        showToast('error', 'Ha ocurrido un error!');
-                        break;
-                    case 2:
-                        window.location.href = "<?php echo base_url('Authentication?session=expired'); ?>";
-                        break;
+        let total = Number(<?php echo $total; ?>)
+        if (total > 0) {
+            $('#btn-charge').attr('disabled', true);
+            $.ajax({
+                type: "post",
+                url: "<?php echo base_url('TPV/modalPayType'); ?>",
+                data: {
+                    'basketID': basketID
+                },
+                dataType: "html",
+                success: function(response) {
+                    $('#main-modal').html(response);
+                    $('#btn-charge').removeAttr('disabled');
+                },
+                error: function(error) {
+                    showToast('error', 'Ha ocurrido un error!');
                 }
-            },
-            error: function(error) {
-                showToast('error', 'Ha ocurrido un error!');
-            }
-        });
+            });
+        } else
+            showToast('error', 'No hay artículos en la cesta!');
     });
 </script>
