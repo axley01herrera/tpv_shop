@@ -121,4 +121,21 @@ class MainModel extends Model
 
         return $query->get()->getResult();
     }
+
+    public function deleteShopBasketProduct($basketID)
+    {
+        $query = $this->db->table('shop_basket_product')
+        ->where('fk_basket', $basketID)
+        ->delete();
+
+        if($query == true) {
+            $return['error'] = 0;
+            $return['msg'] = 'success';
+        } else {
+            $return['error'] = 0;
+            $return['msg'] = 'error on delete record';
+        }
+
+        return $return;
+    }
 }

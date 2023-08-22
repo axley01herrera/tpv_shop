@@ -8,7 +8,7 @@
     <div class="card-header">
         <div class="row">
             <div class="col-6">
-                <h3>Cesta de Compra</h3>
+                <h3><i class="mdi mdi-shopping-outline"></i> Cesta</h3>
             </div>
         </div>
     </div>

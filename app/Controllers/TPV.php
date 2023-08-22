@@ -4,18 +4,21 @@ namespace App\Controllers;
 
 use App\Models\MainModel;
 use App\Models\DataTablesModel;
+use App\Models\ReportModel;
 
 class TPV extends BaseController
 {
     protected $objSession;
     protected $objMainModel;
     protected $objDataTablesModel;
+    protected $objReportModel;
 
     function  __construct()
     {
         $this->objSession = session();
         $this->objMainModel = new MainModel;
         $this->objDataTablesModel = new DataTablesModel;
+        $this->objReportModel = new ReportModel;
     }
 
     # DASHBOARD
@@ -55,10 +58,14 @@ class TPV extends BaseController
 
         for ($i = 0; $i < $totalRows; $i++) {
 
-            if($result[$i]->payType == 1)
+            if ($result[$i]->payType == 1)
                 $payType = "Efectivo";
             else
                 $payType = "Tarjeta";
+
+            $btnOpen = '<button type="button" class="btn-open btn btn-sm btn-success" data-id="' . $result[$i]->basketID . '" title="Re-abrir"><i class="mdi mdi-lock-open-variant-outline"></i></button>';
+            $btnPrint = '<button type="button" class="btn-print btn btn-sm btn-secondary" data-id="' . $result[$i]->basketID . '" title="Imprimir"><i class="mdi mdi-printer"></i></button>';
+            $btnDelete = '<button type="button" class="btn-del btn btn-sm btn-danger" data-id="' . $result[$i]->basketID . '" title="Eliminar Venta"><i class="mdi mdi-trash-can-outline"></i></button>';
 
             $col = array();
             $col['id'] = $result[$i]->basketID;
@@ -66,7 +73,8 @@ class TPV extends BaseController
             $col['articles'] = $result[$i]->articles;
             $col['payType'] = $payType;
             $col['amount'] = '€ ' . number_format($result[$i]->amount, 2, ".", ',');
-            
+            $col['action'] = $btnOpen . ' ' . $btnPrint . ' ' . $btnDelete;
+
             $row[$i] =  $col;
         }
 
@@ -86,6 +94,13 @@ class TPV extends BaseController
         return json_encode($data);
     }
 
+    public function collectionDay()
+    {
+        $data = array();
+        $data['collectionDay'] = $this->objReportModel->collectionDay();
+        return view('dashboard/collectionDay', $data);
+    }
+
     # TPV
 
     public function tpv()
@@ -97,18 +112,18 @@ class TPV extends BaseController
 
         $data = array();
         $basket = $this->objMainModel->objDataByField('shop_basket', 'status', 1);
-        
-        if(empty($basket)) {
+
+        if (empty($basket)) {
             $insert = array();
             $insert['status'] = 1;
             $result = $this->objMainModel->objCreate('shop_basket', $insert);
             $data['basketID'] = $result['id'];
-        } else 
+        } else
             $data['basketID'] = $basket[0]->id;
-            
+
         $data['menu_ative'] = 'tpv';
         $data['page'] = 'tpv/mainTPV';
-        
+
         return view('main', $data);
     }
 
@@ -217,7 +232,7 @@ class TPV extends BaseController
 
         $data = array();
         $data['dataEdit'] = $this->objMainModel->getShopBasketProductByID($this->request->getPost('id'));
-        $data['title'] = 'Editando '.$data['dataEdit'][0]->name;
+        $data['title'] = 'Editando ' . $data['dataEdit'][0]->name;
 
         return view('modals/modalEditArticleFromBasket', $data);
     }
@@ -265,16 +280,54 @@ class TPV extends BaseController
         }
 
         $basketID = $this->request->getPost('basketID');
-        $payType = $this->request->getPost('payType'); 
-       
+        $payType = $this->request->getPost('payType');
+
         $data = array();
         $data['status'] = 0;
         $data['dateTime'] = date("Y-m-d H:i:s");
         $data['date'] = date("Y-m-d");
-        $data['payType'] = (int) $payType; 
-       
+        $data['payType'] = (int) $payType;
+
         $result = $this->objMainModel->objUpdate('shop_basket', $data, $basketID);
-        
+
+        return json_encode($result);
+    }
+
+    public function reopenBasket()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $basketID = $this->request->getPost('basketID');
+
+        $data = array();
+        $data['status'] = 1;
+
+        $result = $this->objMainModel->objUpdate('shop_basket', $data, $basketID);
+
+        return json_encode($result);
+    }
+
+    public function deleteBasket()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $basketID = $this->request->getPost('basketID');
+
+        $this->objMainModel->deleteShopBasketProduct($basketID);
+        $result = $this->objMainModel->objDelete('shop_basket', $basketID);
+
         return json_encode($result);
     }
 

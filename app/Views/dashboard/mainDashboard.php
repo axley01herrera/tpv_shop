@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-4">
-
+            <div id="main-collection-day"></div>
         </div>
         <div class="col-8">
             <div class="card">
@@ -14,12 +14,13 @@
                             <thead>
                                 <th><strong>ID</strong></th>
                                 <th><strong>Fecha</th>
-                                <th class="text-center"><strong>Total de Artículos</strong></th>
+                                <th class="text-center"><strong>Artículos</strong></th>
                                 <th class="text-center"><strong>Tipo de Pago</strong></th>
-                                <th class="text-end"><strong>Monto</strong></th>
+                                <th class="text-center"><strong>Monto</strong></th>
+                                <th class="text-center"><strong>Acciones</strong></th>
                             </thead>
                         </table>
-                    </div>  
+                    </div>
                 </div>
             </div>
         </div>
@@ -27,6 +28,9 @@
 </div>
 
 <script>
+
+    collectionDay();
+    
     var dtHistory = $('#dt-history').DataTable({
         destroy: true,
         processing: true,
@@ -50,6 +54,7 @@
         ],
         columns: [{
                 data: 'id',
+                visible: false
             },
             {
                 data: 'date'
@@ -67,8 +72,103 @@
             {
                 data: 'amount',
                 searchable: false,
-                class: 'text-end'
+                class: 'text-center'
+            },
+            {
+                data: 'action',
+                searchable: false,
+                orderable: false,
+                class: 'text-center'
             },
         ],
     });
+
+    dtHistory.on('click', '.btn-open', function() {
+        let basketID = $(this).attr('data-id');
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/reopenBasket'); ?>",
+            data: {
+                'basketID': basketID
+            },
+            dataType: "json",
+            success: function(response) {
+                switch (response.error) {
+                    case 0:
+                        window.location.href = '<?php echo base_url('TPV/tpv'); ?>';
+                        break;
+                    case 1:
+                        showToast('error', 'Ha ocurrido un error!');
+                        break;
+                    case 2:
+                        window.location.href = "<?php echo base_url('Authentication?session=expired'); ?>";
+                        break;
+                }
+            },
+            error: function(error) {
+                showToast('error', 'Ha ocurrido un error!');
+            }
+        });
+    });
+
+    dtHistory.on('click', '.btn-del', function() {
+        let basketID = $(this).attr('data-id');
+        Swal.fire({ // ALERT WARNING
+            title: 'Está seguro?',
+            text: "Esta acción no es reversible!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#74788d',
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Salir',
+            customClass: {
+                confirmButton: 'delete'
+            }
+        });
+        $('.delete').on('click', function() { // ACTION DELETE
+            $.ajax({
+                type: "post",
+                url: "<?php echo base_url('TPV/deleteBasket'); ?>",
+                data: {
+                    'basketID': basketID
+                },
+                dataType: "json",
+                success: function(response) {
+                    switch (response.error) {
+                        case 0:
+                            dtHistory.draw();
+                            showToast('success', 'Venta eliminada!');
+                            break;
+                        case 1:
+                            showToast('error', 'Ha ocurrido un error!');
+                            break;
+                        case 2:
+                            window.location.href = "<?php echo base_url('Authentication?session=expired'); ?>";
+                            break;
+                    }
+                },
+                error: function(error) {
+                    showToast('error', 'Ha ocurrido un error!');
+                }
+            });
+        });
+
+
+    });
+
+    function collectionDay() {
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/collectionDay'); ?>",
+            data: "",
+            dataType: "html",
+            success: function(response) {
+                $('#main-collection-day').html(response);
+            },
+            error: function(error) {
+                showToast('error', 'Ha ocurrido un error!');
+            }
+        });
+    }
 </script>
