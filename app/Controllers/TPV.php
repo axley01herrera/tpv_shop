@@ -47,8 +47,10 @@ class TPV extends BaseController
         if(empty($basket)) {
             $result = $this->objMainModel->objCreate('shop_basket', ['status' => 1]);
             $data['basketID'] = $result['id'];
-        } else 
+        } else {
             $data['basketID'] = $basket[0]->id;
+            $this->objMainModel->objUpdate('shop_basket', ['dateTime' => date("Y-m-d H:i:s")], $data['basketID']);
+        }
 
         $data['menu_ative'] = 'tpv';
         $data['page'] = 'tpv/mainTPV';
