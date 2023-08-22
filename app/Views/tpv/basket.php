@@ -1,4 +1,3 @@
-
 <style>
     .scrollable {
         max-height: 500px;
@@ -19,9 +18,9 @@
                 <div class="table-responsive">
                     <table id="dt-basket" class="table" style="width: 100%;">
                         <tbody>
-                            <?php 
+                            <?php
                             $total = 0;
-                            foreach ($basket as $article) : 
+                            foreach ($basket as $article) :
                             ?>
                                 <tr>
                                     <td><?php echo $article->name; ?></td>
@@ -31,9 +30,9 @@
                                         <button data-id="<?php echo $article->id; ?>" class="btn btn-sm btn-danger remove-article"><span class="mdi mdi-trash-can-outline" title="Remover Artículo"></span></button>
                                     </td>
                                 </tr>
-                            <?php 
-                            $total = $total + $article->amount;
-                            endforeach 
+                            <?php
+                                $total = $total + $article->amount;
+                            endforeach
                             ?>
                         </tbody>
                     </table>
@@ -42,15 +41,15 @@
         </div>
         <div class="row">
             <div class="col-12 text-end">
-                <h3>Total: <span><?php echo '€ ' . number_format($total, 2, ".", ','); ?></span> </h3> 
+                <h3>Total: <span><?php echo '€ ' . number_format($total, 2, ".", ','); ?></span> </h3>
                 <br>
-                <button id="btn-charge" class="btn btn-sm btn-success">Cobrar</button>       
+                <button id="btn-charge" class="btn btn-sm btn-success">Cobrar</button>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $('.edit-price').on('click', function () {
+    $('.edit-price').on('click', function() {
         let id = $(this).attr('data-id');
 
         $.ajax({
@@ -98,5 +97,36 @@
             }
         });
 
+    });
+
+    $('#btn-charge').on('click', function() {
+        $('#btn-charge').attr('disabled', true);
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/charge'); ?>",
+            data: {
+                'basketID': basketID
+            },
+            dataType: "json",
+            success: function(response) {
+                switch (response.error) {
+                    case 0:
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, "1000");
+                        showToast('success', 'Cesta cobrada!');
+                        break;
+                    case 1:
+                        showToast('error', 'Ha ocurrido un error!');
+                        break;
+                    case 2:
+                        window.location.href = "<?php echo base_url('Authentication?session=expired'); ?>";
+                        break;
+                }
+            },
+            error: function(error) {
+                showToast('error', 'Ha ocurrido un error!');
+            }
+        });
     });
 </script>

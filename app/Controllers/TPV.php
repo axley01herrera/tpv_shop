@@ -186,6 +186,22 @@ class TPV extends BaseController
         return json_encode($result);
     }
 
+    public function charge()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $basketID = $this->request->getPost('basketID');
+        $result = $this->objMainModel->objUpdate('shop_basket', ['status' => 0], $basketID);
+        
+        return json_encode($result);
+    }
+
     # PRODUCTS 
 
     public function products()
