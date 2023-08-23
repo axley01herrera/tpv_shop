@@ -179,7 +179,7 @@ class TPV extends BaseController
 
         for ($i = 0; $i < $totalRows; $i++) {
 
-            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-outline-primary btn-add-product" data-id="' . $result[$i]->id . '"><i class="mdi mdi-cart-plus"></i> Añadir</button>';
+            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-soft-primary btn-add-product" data-id="' . $result[$i]->id . '">Añadir a la Cesta</button>';
 
             $col = array();
             $col['name'] = $result[$i]->name;
