@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\MainModel;
 use App\Models\DataTablesModel;
 use App\Models\ReportModel;
+use App\Models\BarcodeModel;
 
 class TPV extends BaseController
 {
@@ -12,6 +13,7 @@ class TPV extends BaseController
     protected $objMainModel;
     protected $objDataTablesModel;
     protected $objReportModel;
+    protected $objBarcodeModel;
 
     function  __construct()
     {
@@ -19,6 +21,7 @@ class TPV extends BaseController
         $this->objMainModel = new MainModel;
         $this->objDataTablesModel = new DataTablesModel;
         $this->objReportModel = new ReportModel;
+        $this->objBarcodeModel = new BarcodeModel;
     }
 
     # DASHBOARD
@@ -411,7 +414,8 @@ class TPV extends BaseController
                                             </div>';
             }
 
-            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-warning btn-edit-product" data-id="' . $result[$i]->id . '" cat-id=""><span class="mdi mdi-square-edit-outline" title="Editar Producto"></span></button>';
+            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-warning btn-edit-product" data-id="' . $result[$i]->id . '" title="Editar Producto"><span class="mdi mdi-square-edit-outline"></span></button>';
+            $btn_code = '<button class="ms-1 me-1 btn btn-sm btn-secondary btn-print-code" data-id="' . $result[$i]->id . '" title="Imprimir Código de Barras"><span class="mdi mdi-barcode"></span></button>';
 
             $col = array();
             $col['name'] = $result[$i]->name;
@@ -419,7 +423,7 @@ class TPV extends BaseController
             $col['price'] = '€ ' . number_format($result[$i]->price, 2, ".", ',');
             $col['status'] = $status;
             $col['switch'] = $switch;
-            $col['action'] = $btn_edit;
+            $col['action'] = $btn_edit.' '.$btn_code;
 
             $row[$i] =  $col;
         }
@@ -538,6 +542,25 @@ class TPV extends BaseController
         $result = $this->objMainModel->objUpdate('shop_product', $data, $id);
 
         return json_encode($result);
+    }
+
+    public function printBarCode()
+    {
+        $productID = $this->request->uri->getSegment(3);
+        $result = $this->objMainModel->objDataByID('shop_product', $productID);
+        
+        $symbology = 'code-128';
+        $options = array('sx' => '2', 'h' => '60', 'ph' => '0');
+        $code = $result[0]->code;
+        $barcode = $this->objBarcodeModel->render_svg($symbology, $code, $options);
+
+        $data = array();
+        $data['name'] = $result[0]->name;
+        $data['code'] = $result[0]->code;
+        $data['barcode'] = $barcode;
+       
+
+        return view('products/printBarCode', $data);
     }
 
     # SETTINGS

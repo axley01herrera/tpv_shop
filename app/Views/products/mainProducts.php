@@ -140,7 +140,6 @@
 
     dtArticle.on('click', '.btn-edit-product', function() {
         $.ajax({
-
             type: "post",
             url: "<?php echo base_url('TPV/showModalProduct'); ?>",
             data: {
@@ -156,4 +155,10 @@
             }
         });
     });
+
+    dtArticle.on('click', '.btn-print-code', function() {
+        let id = $(this).attr('data-id')
+        let url = "<?php echo base_url('TPV/printBarCode'); ?>" + '/' + id;
+        window.open(url, 'blank');
+    })
 </script>
