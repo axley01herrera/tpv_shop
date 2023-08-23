@@ -101,6 +101,34 @@ class TPV extends BaseController
         return view('dashboard/collectionDay', $data);
     }
 
+    public function chartWeek()
+    {
+        $data = array();
+        $data['chartWeek'] = $this->objReportModel->chartWeek();
+        return view('dashboard/chartWeek', $data);
+    }
+
+    public function chartMont()
+    {
+        if (!empty($this->request->getPostGet('year')))
+            $year = $this->request->getPostGet('year');
+        else
+            $year = date('Y');
+
+        $data = array();
+        $data['chartMont'] = $this->objReportModel->chartMont($year);
+        $data['year'] = $year;
+        $data['currentYear'] = date('Y');
+        return view('dashboard/chartMont', $data);
+    }
+
+    public function productInfo()
+    {
+        $data = array();
+        $data['productInfo'] = $this->objReportModel->productInfo();
+        return view('dashboard/productInfo', $data);
+    }
+
     # TPV
 
     public function tpv()

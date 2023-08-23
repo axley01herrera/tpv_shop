@@ -1,9 +1,12 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-4">
+        <div class="col-12 col-lg-4">
             <div id="main-collection-day"></div>
+            <div id="main-chart-week"></div>
+            <div id="main-product-info"></div>
         </div>
-        <div class="col-8">
+        <div class="col-12 col-lg-8">
+            <div id="main-chart-mont"></div>
             <div class="card">
                 <div class="card-header">
                     <h3>Historial de Ventas</h3>
@@ -28,9 +31,11 @@
 </div>
 
 <script>
-
     collectionDay();
-    
+    productInfo();
+    chartWeek();
+    chartMont();
+
     var dtHistory = $('#dt-history').DataTable({
         destroy: true,
         processing: true,
@@ -165,6 +170,53 @@
             dataType: "html",
             success: function(response) {
                 $('#main-collection-day').html(response);
+            },
+            error: function(error) {
+                showToast('error', 'Ha ocurrido un error!');
+            }
+        });
+    }
+
+    function chartWeek() {
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/chartWeek'); ?>",
+            data: "",
+            dataType: "html",
+            success: function(response) {
+                $('#main-chart-week').html(response);
+            },
+            error: function(error) {
+                showToast('error', 'Ha ocurrido un error!');
+            }
+        });
+    }
+
+    function chartMont(year = '') {
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/chartMont'); ?>",
+            data: {
+                'year': year
+            },
+            dataType: "html",
+            success: function(response) {
+                $('#main-chart-mont').html(response);
+            },
+            error: function(error) {
+                showToast('error', 'Ha ocurrido un error');
+            }
+        });
+    }
+
+    function productInfo() {
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/productInfo'); ?>",
+            data: "",
+            dataType: "html",
+            success: function(response) {
+                $('#main-product-info').html(response);
             },
             error: function(error) {
                 showToast('error', 'Ha ocurrido un error!');
