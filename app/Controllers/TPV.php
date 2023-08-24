@@ -390,7 +390,7 @@ class TPV extends BaseController
         $count = sizeof($tiketInfo);
 
         try {
-            $connector = new WindowsPrintConnector("smb://AcerNitroDev/POS80 Printer");
+            $connector = new WindowsPrintConnector($config->printer);
             $printer = new Printer($connector);
 
             // Cabecera del ticket
@@ -671,6 +671,7 @@ class TPV extends BaseController
         $data['country'] = htmlspecialchars(trim($this->request->getPost('country')));
         $data['email'] = htmlspecialchars(trim($this->request->getPost('email')));
         $data['phone'] = htmlspecialchars(trim($this->request->getPost('phone')));
+        $data['printer'] = htmlspecialchars(trim($this->request->getPost('printer')));
 
         $result = $this->objMainModel->objUpdate('shop_config', $data, 1);
 

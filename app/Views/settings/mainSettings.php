@@ -49,13 +49,22 @@
             <section>
                 <div class="row mt-3">
                     <h6>Datos de Contacto</h6>
-                    <div class="col-12 col-lg-4">
+                    <div class="col-12 col-lg-4 mt-2">
                         <label for="txt-email">Correo Electrónico</label>
                         <input type="text" id="txt-email" class="form-control required focus" value="<?php echo $settings->email; ?>" />
                     </div>
-                    <div class="col-12 col-lg-4">
+                    <div class="col-12 col-lg-4 mt-2">
                         <label for="txt-phone">Teléfono</label>
                         <input type="text" id="txt-phone" class="form-control required focus" value="<?php echo $settings->phone; ?>" />
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="row mt-3">
+                    <h6>Impresora</h6>
+                    <div class="col-12 col-lg-4 mt-2">
+                        <label for="txt-printer">Dirección de Conexión</label>
+                        <input type="text" id="txt-printer" class="form-control required focus" value="<?php echo $settings->printer; ?>" />
                     </div>
                 </div>
             </section>
@@ -85,7 +94,8 @@
                     'zipCode': $('#txt-zipCode').val(),
                     'country': $('#txt-country').val(),
                     'email': $('#txt-email').val(),
-                    'phone': $('#txt-phone').val()
+                    'phone': $('#txt-phone').val(),
+                    'printer': $('#txt-printer').val(),
                 },
                 dataType: "json",
                 success: function(response) {
