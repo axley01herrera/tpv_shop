@@ -154,6 +154,7 @@
                 }
             },
             error: function(error) {
+                dtBasket();
                 //showToast('error', 'Ha ocurrido un error!');
             }
         });
