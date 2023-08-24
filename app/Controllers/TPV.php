@@ -37,13 +37,6 @@ class TPV extends BaseController
             return view('errorPage/sessionExpired');
         }
 
-        /*
-        $connector = new WindowsPrintConnector("smb://AcerNitroDev/POS80 Printer");
-        $printer = new Printer($connector);
-        $printer -> text("Hello World!\n");
-        $printer -> cut();   
-        $printer -> close();*/
-
         $data = array();
         $data['menu_ative'] = 'dashboard';
         $data['page'] = 'dashboard/mainDashboard';
@@ -141,6 +134,15 @@ class TPV extends BaseController
         $data = array();
         $data['productInfo'] = $this->objReportModel->productInfo();
         return view('dashboard/productInfo', $data);
+    }
+
+    public function reprintTicket()
+    {
+        $basketID = $this->request->getPost('basketID');
+        $result = $this->objMainModel->objDataByID('shop_basket', $basketID);
+        $this->printTicket($basketID, $result[0]->dateTime, $result[0]->payType);
+        $response['result'] = 'success';
+        return json_encode($response);
     }
 
     # TPV

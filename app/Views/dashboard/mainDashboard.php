@@ -162,6 +162,25 @@
 
     });
 
+    dtHistory.on('click', '.btn-print', function () {
+        let basketID = $(this).attr('data-id');
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/reprintTicket'); ?>",
+            data: {
+                'basketID': basketID
+            },
+            dataType: "json",
+            success: function (response) {
+                
+            },
+            error: function (error) {
+                showToast('error', 'Ha ocurrido un error!');
+            }
+        });
+    });
+
+
     function collectionDay() {
         $.ajax({
             type: "post",
