@@ -6,6 +6,8 @@ use App\Models\MainModel;
 use App\Models\DataTablesModel;
 use App\Models\ReportModel;
 use App\Models\BarcodeModel;
+use Escpos\PrintConnectors\WindowsPrintConnector;
+use Escpos\Printer;
 
 class TPV extends BaseController
 {
@@ -33,6 +35,13 @@ class TPV extends BaseController
             return view('errorPage/sessionExpired');
         }
 
+        /*
+        $connector = new WindowsPrintConnector("smb://AcerNitroDev/POS80 Printer");
+        $printer = new Printer($connector);
+        $printer -> text("Hello World!\n");
+        $printer -> cut();   
+        $printer -> close();*/
+       
         $data = array();
         $data['menu_ative'] = 'dashboard';
         $data['page'] = 'dashboard/mainDashboard';
@@ -423,7 +432,7 @@ class TPV extends BaseController
             $col['price'] = '€ ' . number_format($result[$i]->price, 2, ".", ',');
             $col['status'] = $status;
             $col['switch'] = $switch;
-            $col['action'] = $btn_edit.' '.$btn_code;
+            $col['action'] = $btn_edit . ' ' . $btn_code;
 
             $row[$i] =  $col;
         }
@@ -548,7 +557,7 @@ class TPV extends BaseController
     {
         $productID = $this->request->uri->getSegment(3);
         $result = $this->objMainModel->objDataByID('shop_product', $productID);
-        
+
         $symbology = 'code-128';
         $options = array('sx' => '2', 'h' => '60', 'ph' => '0');
         $code = $result[0]->code;
@@ -558,7 +567,7 @@ class TPV extends BaseController
         $data['name'] = $result[0]->name;
         $data['code'] = $result[0]->code;
         $data['barcode'] = $barcode;
-       
+
 
         return view('products/printBarCode', $data);
     }
