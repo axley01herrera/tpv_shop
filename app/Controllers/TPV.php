@@ -8,6 +8,8 @@ use App\Models\ReportModel;
 use App\Models\BarcodeModel;
 use Escpos\PrintConnectors\WindowsPrintConnector;
 use Escpos\Printer;
+use Escpos\EscposImage;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 class TPV extends BaseController
 {
@@ -41,7 +43,7 @@ class TPV extends BaseController
         $printer -> text("Hello World!\n");
         $printer -> cut();   
         $printer -> close();*/
-       
+
         $data = array();
         $data['menu_ative'] = 'dashboard';
         $data['page'] = 'dashboard/mainDashboard';
@@ -329,6 +331,7 @@ class TPV extends BaseController
         $data['payType'] = (int) $payType;
 
         $result = $this->objMainModel->objUpdate('shop_basket', $data, $basketID);
+        $this->printTicket($basketID, $data['dateTime'], $data['payType']);
 
         return json_encode($result);
     }
@@ -369,6 +372,64 @@ class TPV extends BaseController
         $result = $this->objMainModel->objDelete('shop_basket', $basketID);
 
         return json_encode($result);
+    }
+
+    public function printTicket($basketID, $date, $type)
+    {
+        $payType = '';
+
+        if ($type == 1)
+            $payType = 'Efectivo';
+        elseif ($type == 2)
+            $payType = 'Tarjeta';
+
+        $config = $this->objMainModel->objDataByID('shop_config', 1)[0]; //var_dump($config); exit();
+        $tiketInfo = $this->objMainModel->dtBasket($basketID); //var_dump($tiketInfo); exit();
+        $count = sizeof($tiketInfo);
+
+        try {
+            $connector = new WindowsPrintConnector("smb://AcerNitroDev/POS80 Printer");
+            $printer = new Printer($connector);
+
+            // Cabecera del ticket
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text($config->name . "\n");
+            $printer->text("CIF: " . $config->cif . "\n");
+            $printer->text($config->address1 . "\n");
+            $printer->text($config->address2 . "\n");
+            $printer->text($config->city . ' ' . $config->state . ' ' . $config->zipCode . ' ' . $config->country . "\n");
+            $printer->text("Fecha: " . $date . "\n");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text("--------------------------------\n");
+
+            $total = 0;
+
+            for ($i = 0; $i < $count; $i++) {
+
+                $printer->text($tiketInfo[$i]->name . "\n");
+                $printer->setJustification(Printer::JUSTIFY_RIGHT);
+                $printer->text("Precio " . number_format($tiketInfo[$i]->amount, 2, ".", ',') . "\n");
+                $printer->setJustification(Printer::JUSTIFY_LEFT);
+                $total = $total + $tiketInfo[$i]->amount;
+            }
+
+            $printer->text("--------------------------------\n");
+
+            // Total
+            $printer->setJustification(Printer::JUSTIFY_RIGHT);
+            $printer->text("Total: " . number_format($total, 2, ".", ',') . "\n");
+
+            // Despedida
+            $printer->text("Tipo de Pago: " . $payType . "\n");
+            $printer->text("Gracias por su compra!\n");
+
+            $printer->cut();
+            $printer->close();
+        } catch (\Exception $e) {
+            //echo "Error al imprimir: " . $e->getMessage();
+            return true;
+        }
+        return true;
     }
 
     # PRODUCTS 
