@@ -30,6 +30,15 @@ class MainModel extends Model
         return $query->get()->getResult();
     }
 
+    public function getProductByCode($code)
+    {
+        $query = $this->db->table('shop_product')
+        ->where('status', 1)
+        ->where('code', $code);
+
+        return $query->get()->getResult();
+    }
+
     public function checkDuplicate($table, $field, $value, $id = null)
     {
         $query = $this->db->table($table)

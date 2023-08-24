@@ -434,6 +434,36 @@ class TPV extends BaseController
         return true;
     }
 
+    public function addProductScanCode()
+    {
+        $result = array();
+        $result['error'] = 1;
+        $result['msg'] = 'product not found';
+
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            $result = array();
+            $result['error'] = 2;
+            $result['msg'] = 'session expired';
+            return json_encode($result);
+        }
+
+        $code = $this->request->getPost('code');
+        $product = $this->objMainModel->getProductByCode($code);
+
+        if (!empty($product)) {
+
+            $data = array();
+            $data['fk_basket'] = $this->request->getPost('basketID');
+            $data['fk_product'] = $product[0]->id;
+            $data['amount'] = $product[0]->price;
+
+            $result = $this->objMainModel->objCreate('shop_basket_product', $data);
+
+            return json_encode($result);
+        }
+    }
+
     # PRODUCTS 
 
     public function products()

@@ -10,6 +10,9 @@
             <div class="col-6">
                 <h3><i class="mdi mdi-shopping-outline"></i> Cesta</h3>
             </div>
+            <div class="col-6">
+                <input id="txt-scancode" type="text" class="form-control" />
+            </div>
         </div>
     </div>
     <div class="card-body">
@@ -49,6 +52,10 @@
     </div>
 </div>
 <script>
+    focusInput();
+    function focusInput() {
+      document.getElementById("txt-scancode").focus();
+    }
     $('.edit-price').on('click', function() {
         let id = $(this).attr('data-id');
 
@@ -120,5 +127,35 @@
             });
         } else
             showToast('error', 'No hay artículos en la cesta!');
+    });
+
+    $('#txt-scancode').on('input', function() {
+        $.ajax({
+            type: "post",
+            url: "<?php echo base_url('TPV/addProductScanCode'); ?>",
+            data: {
+                'code': $(this).val(),
+                'basketID': basketID
+            },
+            dataType: "json",
+            success: function(response) {
+                switch (response.error) {
+                    case 0:
+                        dtBasket();
+                        showToast('success', 'Artículo añadido a la cesta de compra!');
+                        break;
+                    case 1:
+                        dtBasket();
+                        showToast('error', 'Artículo no encontrado!');
+                        break;
+                    case 2:
+                        window.location.href = "<?php echo base_url('Authentication?session=expired'); ?>";
+                        break;
+                }
+            },
+            error: function(error) {
+                //showToast('error', 'Ha ocurrido un error!');
+            }
+        });
     });
 </script>
