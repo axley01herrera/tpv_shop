@@ -142,7 +142,7 @@
                 success: function(response) {
                     switch (response.error) {
                         case 0:
-                            dtHistory.draw();
+                            window.location.reload();
                             showToast('success', 'Venta eliminada!');
                             break;
                         case 1:
