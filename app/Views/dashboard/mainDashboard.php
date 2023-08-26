@@ -9,18 +9,18 @@
             <div id="main-chart-mont"></div>
             <div class="card">
                 <div class="card-header">
-                    <h3>Historial de Ventas</h3>
+                    <h3 class="text-muted">Historial de Ventas</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="dt-history" class="table" style="width: 100%;">
                             <thead>
-                                <th><strong>ID</strong></th>
-                                <th><strong>Fecha</th>
-                                <th class="text-center"><strong>Artículos</strong></th>
-                                <th class="text-center"><strong>Tipo de Pago</strong></th>
-                                <th class="text-center"><strong>Monto</strong></th>
-                                <th class="text-center"><strong>Acciones</strong></th>
+                                <th class="text-muted"><strong>ID</strong></th>
+                                <th class="text-muted"><strong>Fecha</th>
+                                <th class="text-center text-muted"><strong>Artículos</strong></th>
+                                <th class="text-center text-muted"><strong>Tipo de Pago</strong></th>
+                                <th class="text-center text-muted"><strong>Monto</strong></th>
+                                <th class="text-center text-muted"><strong>Acciones</strong></th>
                             </thead>
                         </table>
                     </div>

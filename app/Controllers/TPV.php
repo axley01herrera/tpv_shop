@@ -64,15 +64,16 @@ class TPV extends BaseController
         $totalRows = sizeof($result);
 
         for ($i = 0; $i < $totalRows; $i++) {
+            $payType = '';
 
             if ($result[$i]->payType == 1)
-                $payType = "Efectivo";
-            else
-                $payType = "Tarjeta";
+                $payType = '<span class="badge badge-soft-success">Efectivo</span>';
+            elseif ($result[$i]->payType == 2)
+                $payType = '<span class="badge badge-soft-primary">Tarjeta</span>';
 
-            $btnOpen = '<button type="button" class="btn-open btn btn-sm btn-success" data-id="' . $result[$i]->basketID . '" title="Re-abrir"><i class="mdi mdi-lock-open-variant-outline"></i></button>';
-            $btnPrint = '<button type="button" class="btn-print btn btn-sm btn-secondary" data-id="' . $result[$i]->basketID . '" title="Imprimir"><i class="mdi mdi-printer"></i></button>';
-            $btnDelete = '<button type="button" class="btn-del btn btn-sm btn-danger" data-id="' . $result[$i]->basketID . '" title="Eliminar Venta"><i class="mdi mdi-trash-can-outline"></i></button>';
+            $btnOpen = '<button type="button" class="btn-open btn btn-sm btn-outline-light" data-id="' . $result[$i]->basketID . '" title="Re-abrir"><i class="mdi mdi-lock-open-variant-outline text-success"></i></button>';
+            $btnPrint = '<button type="button" class="btn-print btn btn-sm btn-outline-light" data-id="' . $result[$i]->basketID . '" title="Imprimir"><i class="mdi mdi-printer text-secondary"></i></button>';
+            $btnDelete = '<button type="button" class="btn-del btn btn-sm btn-outline-light" data-id="' . $result[$i]->basketID . '" title="Eliminar Venta"><i class="mdi mdi-trash-can-outline text-danger"></i></button>';
 
             $col = array();
             $col['id'] = $result[$i]->basketID;
@@ -192,7 +193,7 @@ class TPV extends BaseController
 
         for ($i = 0; $i < $totalRows; $i++) {
 
-            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-soft-primary btn-add-product" data-id="' . $result[$i]->id . '">Añadir a la Cesta</button>';
+            $btn_edit = '<button title="Añadir a la Cesta" class="btn btn-sm btn-outline-light btn-add-product" data-id="' . $result[$i]->id . '"><i class="mdi mdi-shopping-outline text-primary"></i></button>';
 
             $col = array();
             $col['name'] = $result[$i]->name;
@@ -505,19 +506,19 @@ class TPV extends BaseController
             $status = '';
 
             if ($result[$i]->status == 1) {
-                $status = '<span class="badge bg-success">' . $result[$i]->statusLabel . '</span>';
+                $status = '<span class="badge badge-soft-success">' . $result[$i]->statusLabel . '</span>';
                 $switch = '<div class="form-check form-switch form-switch-md mb-2" title="desactivar/activar" >
                                                 <input data-id="' . $result[$i]->id . '" data-status="' . $result[$i]->status . '" class="form-check-input switch" type="checkbox" id="flexSwitchCheckChecked" checked />
                                             </div>';
             } else {
-                $status = '<span class="badge bg-danger">' . $result[$i]->statusLabel . '</span>';
+                $status = '<span class="badge badge-soft-danger">' . $result[$i]->statusLabel . '</span>';
                 $switch = '<div class="form-check form-switch form-switch-md mb-2" title="desactivar/activar" >
                                                 <input data-id="' . $result[$i]->id . '" data-status="' . $result[$i]->status . '" class="form-check-input switch" type="checkbox" id="flexSwitchCheckChecked" />
                                             </div>';
             }
 
-            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-warning btn-edit-product" data-id="' . $result[$i]->id . '" title="Editar Producto"><span class="mdi mdi-square-edit-outline"></span></button>';
-            $btn_code = '<button class="ms-1 me-1 btn btn-sm btn-secondary btn-print-code" data-id="' . $result[$i]->id . '" title="Imprimir Código de Barras"><span class="mdi mdi-barcode"></span></button>';
+            $btn_edit = '<button class="ms-1 me-1 btn btn-sm btn-outline-light btn-edit-product" data-id="' . $result[$i]->id . '" title="Editar Producto"><span class="mdi mdi-square-edit-outline text-warning"></span></button>';
+            $btn_code = '<button class="ms-1 me-1 btn btn-sm btn-outline-light btn-print-code" data-id="' . $result[$i]->id . '" title="Imprimir Código de Barras"><span class="mdi mdi-barcode text-dark"></span></button>';
 
             $col = array();
             $col['name'] = $result[$i]->name;
@@ -660,9 +661,75 @@ class TPV extends BaseController
         $data['name'] = $result[0]->name;
         $data['code'] = $result[0]->code;
         $data['barcode'] = $barcode;
-
-
+        
         return view('products/printBarCode', $data);
+    }
+
+    # REPORT
+
+    public function report()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['menu_ative'] = 'report';
+        $data['page'] = 'report/mainReport';
+
+        return view('main', $data);
+    }
+
+    public function returnReportContent()
+    {
+        # VERIFY SESSION
+        if (empty($this->objSession->get('user'))) {
+            return view('errorPage/sessionExpired');
+        }
+
+        $data = array();
+        $data['dateStart'] = $this->request->getPost('dateStart');
+        $data['dateEnd'] = $this->request->getPost('dateEnd');
+
+        return view('report/content', $data);
+    }
+
+    public function getCollectionReport()
+    {
+        $dateStart = $this->request->getPost('dateStart');
+        $dateEnd = $this->request->getPost('dateEnd');
+
+        $result = $this->objReportModel->getCollectionReport($dateStart, $dateEnd);
+
+        $data = array();
+        $data['collectionDay'] = $result;
+
+        return view('report/collection', $data);
+
+    }
+
+    public function dtReport()
+    {
+        $dateStart = $this->request->getPost('dateStart');
+        $dateEnd = $this->request->getPost('dateEnd');
+        $results = $this->objReportModel->dtReport($dateStart, $dateEnd);
+        $rows = array();
+
+        foreach($results as $result) {
+            $col = array();
+            $col['date'] =  '<h5>'.date('d/m/Y', strtotime($result->date)).'</h5>';
+            $col['cash'] = '€ ' . number_format($result->cashAmount, 2, ".", ',');
+            $col['card'] = '€ ' . number_format($result->cardAmount, 2, ".", ',');
+            $col['total'] = '€ ' . number_format($result->totalAmount, 2, ".", ',');
+
+            $rows[] = $col;
+        }
+
+        $data = array();
+        $data['dtReport'] = $rows;
+
+        return view('report/dtReport', $data);
     }
 
     # SETTINGS

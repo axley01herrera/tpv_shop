@@ -1,9 +1,9 @@
 <div class="card">
     <div class="card-header">
-        <h3>Recaudación de la Semana</h3>
+        <h3 class="text-muted">Recaudación de la Semana</h3>
     </div>
     <div class="card-body">
-        <h4 class="font-weight-bold mb-2 d-flex align-items-center">Total <?php echo '€ ' . number_format((float) $chartWeek['total'], 2, ".", ','); ?></h4>
+        <h4 class="font-weight-bold mb-2 d-flex align-items-center">Total:&nbsp;<span class="text-primary"><?php echo '€ ' . number_format((float) $chartWeek['total'], 2, ".", ','); ?></span></h4>
         <div id="chartWeek"></div>
     </div>
 </div>

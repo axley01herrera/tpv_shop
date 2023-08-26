@@ -17,23 +17,23 @@ class ReportModel extends Model
     public function collectionDay()
     {
         $query = $this->db->table('shop_basket')
-        ->select('
+            ->select('
             shop_basket_product.amount AS amount,
             shop_basket.payType AS payType,
         ')
-        ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
-        ->where('date', date("Y-m-d"))
-        ->where('status', 0);
+            ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
+            ->where('date', date("Y-m-d"))
+            ->where('status', 0);
 
-        $data = $query->get()->getResult(); 
+        $data = $query->get()->getResult();
 
         $cash = 0;
         $card = 0;
 
-        foreach($data as $index) {
-            if($index->payType == 1)
+        foreach ($data as $index) {
+            if ($index->payType == 1)
                 $cash = $cash + $index->amount;
-            elseif($index->payType == 2)
+            elseif ($index->payType == 2)
                 $card = $card + $index->amount;
         }
 
@@ -47,19 +47,19 @@ class ReportModel extends Model
 
     public function chartWeek()
     {
-        $firstDayOfWeek = date('Y-m-d', strtotime('monday this week')); 
+        $firstDayOfWeek = date('Y-m-d', strtotime('monday this week'));
         $lastDayOfWeek = date('Y-m-d', strtotime('sunday this week'));
 
         $query = $this->db->table('shop_basket')
-        ->select('
+            ->select('
             shop_basket.date AS date,
             shop_basket_product.amount AS amount,
             shop_basket.payType AS payType,
         ')
-        ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
-        ->where('date >=', $firstDayOfWeek)
-        ->where('date <=', $lastDayOfWeek)
-        ->where('status', 0);
+            ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
+            ->where('date >=', $firstDayOfWeek)
+            ->where('date <=', $lastDayOfWeek)
+            ->where('status', 0);
 
         $data = $query->get()->getResult();
 
@@ -98,15 +98,15 @@ class ReportModel extends Model
         $lastDay = date('Y-m-d', strtotime("$year-12-31"));
 
         $query = $this->db->table('shop_basket')
-        ->select('
+            ->select('
             shop_basket.date AS date,
             shop_basket_product.amount AS amount,
             shop_basket.payType AS payType,
         ')
-        ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
-        ->where('date >=', $firstDay)
-        ->where('date <=', $lastDay)
-        ->where('status', 0);
+            ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
+            ->where('date >=', $firstDay)
+            ->where('date <=', $lastDay)
+            ->where('status', 0);
 
         $data = $query->get()->getResult();
         $countData = sizeof($data);
@@ -141,18 +141,67 @@ class ReportModel extends Model
         $active = 0;
         $inactive = 0;
 
-        foreach($data as $product) {
-            if($product->status == 1)
+        foreach ($data as $product) {
+            if ($product->status == 1)
                 $active = $active + 1;
-            elseif($product->status == 0)
+            elseif ($product->status == 0)
                 $inactive = $inactive + 1;
-        } 
-        
+        }
+
         $return = array();
         $return['active'] = $active;
         $return['inactive'] = $inactive;
         $return['total'] = $inactive + $active;
 
         return $return;
+    }
+
+    public function getCollectionReport($dateStart, $dateEnd)
+    {
+        $query = $this->db->table('shop_basket')
+            ->select('
+            shop_basket_product.amount AS amount,
+            shop_basket.payType AS payType,
+        ')
+            ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
+            ->where('date >=', date("Y-m-d", strtotime($dateStart)))
+            ->where('date <=', date("Y-m-d", strtotime($dateEnd)))
+            ->where('status', 0);
+
+        $data = $query->get()->getResult();
+
+        $cash = 0;
+        $card = 0;
+
+        foreach ($data as $index) {
+            if ($index->payType == 1)
+                $cash = $cash + $index->amount;
+            elseif ($index->payType == 2)
+                $card = $card + $index->amount;
+        }
+
+        $return = array();
+        $return['cash'] = $cash;
+        $return['card'] = $card;
+        $return['total'] = $card + $cash;
+
+        return $return;
+    }
+
+    public function dtReport($dateStart, $dateEnd)
+    {
+        $query = $this->db->table('shop_basket')
+            ->select('
+            shop_basket.date,
+            SUM(CASE WHEN shop_basket.payType = 1 THEN shop_basket_product.amount ELSE 0 END) as cashAmount,
+            SUM(CASE WHEN shop_basket.payType = 2 THEN shop_basket_product.amount ELSE 0 END) as cardAmount,
+            SUM(shop_basket_product.amount) as totalAmount
+        ', false)
+            ->join('shop_basket_product', 'shop_basket_product.fk_basket = shop_basket.id')
+            ->where('date >=', date("Y-m-d", strtotime($dateStart)))
+            ->where('date <=', date("Y-m-d", strtotime($dateEnd)))
+            ->groupBy('shop_basket.date');
+
+        return $query->get()->getResult();
     }
 }

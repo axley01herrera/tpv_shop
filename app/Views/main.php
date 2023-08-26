@@ -20,6 +20,19 @@
     <link type="text/css" rel="stylesheet" href="<?php echo base_url('assets/libs/apexcharts/dist/apexcharts.css'); ?>" />
     <link type="text/css" rel="stylesheet" href="<?php echo base_url('assets/css/datatable/dataTables.bootstrap5.min.css'); ?>" />
 
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+
+        table.dataTable td,
+        table.dataTable th {
+            vertical-align: middle;
+        }
+    </style>
+
     <script src="<?php echo base_url('assets/libs/jquery/jquery.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/libs/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/libs/metismenujs/metismenujs.min.js'); ?>"></script>

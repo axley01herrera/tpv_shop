@@ -89,13 +89,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-12" style="margin-top: 11px;">
-                    <div class="sampleLabel tu-clase-de-contenedor">
-                        <div class="p-2" style="font-size: 12px;">
-                            <?php echo $name; ?>
-                        </div>
-                        <div class="p-2">
-                            <span class="barcodeSVG"><?php echo $barcode; ?></span>
-                        </div>
+                    <div class="p-2">
+                        <span class="barcodeSVG"><?php echo $barcode; ?></span>
                     </div>
                 </div>
             </div>

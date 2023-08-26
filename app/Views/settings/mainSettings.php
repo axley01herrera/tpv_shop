@@ -1,7 +1,7 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h3>Ajustes del Sistema</h3>
+            <h3 class="text-muted">Ajustes del Sistema</h3>
         </div>
         <div class="card-body">
             <section>

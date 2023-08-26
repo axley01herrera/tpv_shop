@@ -1,6 +1,6 @@
 <style>
     .scrollable {
-        max-height: 500px;
+        max-height: 604px;
         overflow-y: auto;
     }
 </style>
@@ -8,7 +8,7 @@
     <div class="card-header">
         <div class="row">
             <div class="col-6">
-                <h3><i class="mdi mdi-shopping-outline"></i> Cesta</h3>
+                <h3 class="text-muted"><i class="mdi mdi-shopping-outline"></i> Cesta</h3>
             </div>
             <div class="col-6">
                 <input id="txt-scancode" type="text" class="form-control" />
@@ -29,8 +29,8 @@
                                     <td><?php echo $article->name; ?></td>
                                     <td><?php echo '€ ' . number_format($article->amount, 2, ".", ','); ?></td>
                                     <td class="text-end">
-                                        <button data-id="<?php echo $article->id; ?>" class="btn btn-sm btn-warning edit-price"><span class="mdi mdi-square-edit-outline" title="Editar Precio"></span></button>
-                                        <button data-id="<?php echo $article->id; ?>" class="btn btn-sm btn-danger remove-article"><span class="mdi mdi-trash-can-outline" title="Remover Artículo"></span></button>
+                                        <button data-id="<?php echo $article->id; ?>" class="btn btn-sm btn-outline-light edit-price"><span class="mdi mdi-square-edit-outline text-warning" title="Editar Precio"></span></button>
+                                        <button data-id="<?php echo $article->id; ?>" class="btn btn-sm btn-outline-light remove-article"><span class="mdi mdi-trash-can-outline text-danger" title="Remover Artículo"></span></button>
                                     </td>
                                 </tr>
                             <?php
@@ -44,7 +44,7 @@
         </div>
         <div class="row">
             <div class="col-12 text-end">
-                <h3>Total: <span><?php echo '€ ' . number_format($total, 2, ".", ','); ?></span> </h3>
+                <h3 class="text-primary">Total: <span><?php echo '€ ' . number_format($total, 2, ".", ','); ?></span> </h3>
                 <br>
                 <button id="btn-charge" class="btn btn-sm btn-success">Cobrar</button>
             </div>

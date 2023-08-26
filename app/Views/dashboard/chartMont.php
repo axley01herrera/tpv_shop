@@ -1,13 +1,12 @@
 <div class="card">
     <div class="card-header">
-        <h3>Recaudación Mensual</h3>
+        <h3 class="text-muted">Recaudación Mensual</h3>
     </div>
     <div class="card-body">
-        <h4 class="font-weight-bold mb-2 d-flex align-items-center">Total <?php echo '€ ' . number_format((float) $chartMont['total'], 2, ".", ','); ?></h4>
+        <h4 class="font-weight-bold mb-2 d-flex align-items-center">Total:&nbsp;<span class="text-primary"><?php echo '€ ' . number_format((float) $chartMont['total'], 2, ".", ','); ?></span></h4>
         <div id="chartMont"></div>
         <div class="row">
             <div class="col-12 col-md-4 col-lg-2">
-                <label for="">Año</label>
                 <select id="sel-year" class="form-select">
                     <?php
 

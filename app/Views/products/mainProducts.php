@@ -3,10 +3,10 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-6">
-                    <h3>Artículos</h3>
+                    <h3 class="text-muted">Artículos</h3>
                 </div>
                 <div class="col-6 text-end">
-                    <button id="btn-createProduct" class="btn btn-primary"><i class="mdi mdi-plus"></i> Artículo</button>
+                    <button id="btn-createProduct" class="btn btn-sm btn-primary">Añadir Artículo</button>
                 </div>
             </div>
         </div>

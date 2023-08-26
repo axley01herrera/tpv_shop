@@ -6,7 +6,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-6">
-                            <h3>Artículos</h3>
+                            <h3 class="text-muted">Artículos</h3>
                         </div>
                     </div>
                 </div>
@@ -16,9 +16,9 @@
                             <div class="table-responsive">
                                 <table id="dt-articleTPV" class="table" style="width: 100%;">
                                     <thead>
-                                        <th><strong>Artículo<strong></th>
-                                        <th><strong>Código<strong></th>
-                                        <th><strong>Precio de Venta<strong></th>
+                                        <th class="text-muted"><strong>Artículo<strong></th>
+                                        <th class="text-muted"><strong>Código<strong></th>
+                                        <th class="text-muted"><strong>Precio de Venta<strong></th>
                                         <th></th>
                                     </thead>
                                 </table>
